@@ -1,19 +1,15 @@
-local function move_right()
+local export = {}
+export["character-at-point"] = function()
+  local pos = vim.fn.col(".")
+  return string.sub(vim.fn.getline("."), pos, pos)
+end
+export["move-cursor-right"] = function()
   local line = vim.fn.line(".")
   local col = (vim.fn.col(".") + 1)
   return vim.fn.cursor(line, col)
 end
-local function character_at_point()
-  local pos = vim.fn.col(".")
-  return string.sub(vim.fn.getline("."), pos, pos)
+export["should-tabout"] = function()
+  local char = export["character-at-point"]()
+  return ((char == "\"") or (char == "'") or (char == ")") or (char == "}") or (char == "]") or (char == "`") or (char == ">"))
 end
-local function _1_()
-  local char = character_at_point()
-  if ((char == "\"") or (char == "'") or (char == ")") or (char == "}") or (char == "]") or (char == "`") or (char == ">")) then
-    return move_right()
-  else
-    return nil
-  end
-end
-tabout = _1_
-return vim.cmd("imap <Tab> <cmd>lua tabout()<cr>")
+return export
